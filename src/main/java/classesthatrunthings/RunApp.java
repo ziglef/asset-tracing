@@ -15,7 +15,7 @@ import java.io.File;
 public class RunApp {
 
     public static void main(String[] args) throws Exception {
-        System.out.println("Working directory: " + new File("./").getAbsolutePath().toString());
+        System.out.println("Working directory: " + new File("./").getAbsolutePath());
         Server server = new Server(9091);
 
         WebAppContext context = new WebAppContext();
