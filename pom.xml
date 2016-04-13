@@ -127,7 +127,7 @@
         </dependency>
 
         <!-- Jetty Embedded App Container -->
-        <!-- You only need this if you want to run the web app in the embedded jetty container using the RunApp class -->
+        <!-- You only need this if you want to run the web app in the embedded jetty container using the AssetTracing class -->
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
