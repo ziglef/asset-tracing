@@ -46,10 +46,10 @@ public class TitanWebService {
     }
 
     @GET
-    @Path("/listGraph")
+    @Path("/listEdges")
     @Produces(MediaType.TEXT_PLAIN)
     public String getGraph(@Context UriInfo info) throws JSONException {
-        String res = groovyOp.getAllNodesAndEdges();
+        String res = javaOp.listEdges();
         return "\"" + res + "\"";
     }
 }

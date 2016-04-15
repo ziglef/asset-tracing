@@ -5,6 +5,7 @@ import groovy.json.JsonOutput
 import org.apache.tinkerpop.gremlin.groovy.loaders.GremlinLoader
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource
 import org.apache.tinkerpop.gremlin.structure.Graph
+import org.apache.tinkerpop.gremlin.structure.Vertex
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
@@ -31,14 +32,5 @@ class GroovyGraphOps {
         // sweet gremlin all up in my java project. aw yeah...
         plutosBrothers = g.V().has("name", "pluto").both("brother").dedup().values("name").toList()
         return plutosBrothers.toString()
-    }
-
-    public String getAllNodesAndEdges() {
-        def allTheVertices
-        def allTheEdges
-
-        allTheVertices = g.V().values("name")
-        allTheEdges = g.V().outE().toList()
-        return JsonOutput.toJson(allTheVertices)
     }
 }
