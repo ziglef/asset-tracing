@@ -52,6 +52,13 @@ public class CreateAndFillGraph {
             }
             System.out.println("Loaded " + assets.size() + " assets!");
 
+            // TESTING REPRESENTING ALL ASSETS //
+            for(Asset a : assets) {
+                tx.addVertex(T.label, "asset", "name", a.getCurrentName(), "id", a.getId(), "full_path", a.getCurrentFullPath().getFullPath());
+            }
+
+            // INITIAL EXAMPLE //
+            /*
             TitanVertex asset1 = tx.addVertex(T.label, "asset", "name", "asset1", "id", 1, "date", "2016-04-03");
             TitanVertex asset12 = tx.addVertex(T.label, "asset", "name", "asset12", "id", 2, "date", "2016-04-10");
             TitanVertex asset13 = tx.addVertex(T.label, "asset", "name", "asset13", "id", 3, "date", "2016-04-15");
@@ -65,7 +72,7 @@ public class CreateAndFillGraph {
             asset12.addEdge("was in", location2, "date", "2016-04-10");
             asset12.addEdge("transformed to", asset13, "date", "2016-04-15");
             asset13.addEdge("was in", location3, "date", "2016-04-15");
-
+            */
             tx.commit();
 
             // GraphOfTheGodsFactory.load(g);

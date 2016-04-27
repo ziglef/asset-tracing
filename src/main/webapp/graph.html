@@ -22,8 +22,8 @@
             var node_names = httpGet("http://localhost:9091/rest/listVertices").replace(/\"/g, "").split(' ');
             var edge_names = httpGet("http://localhost:9091/rest/listEdges").replace(/\"/g, "").split(' ');
 
-            console.log("node_names: " + node_names);
-            console.log("edge_names: " + edge_names);
+            // console.log("node_names: " + node_names);
+            // console.log("edge_names: " + edge_names);
 
             var nodes = new vis.DataSet();
             var edges = new vis.DataSet();

@@ -30,7 +30,7 @@ public class JavaGraphOps {
         Vertex v;
         while (itty.hasNext()) {
             v = itty.next();
-            vs.add((String) v.property("name").value());
+            vs.add((String) v.property("id").value());
         }
 
         return vs.toString()
