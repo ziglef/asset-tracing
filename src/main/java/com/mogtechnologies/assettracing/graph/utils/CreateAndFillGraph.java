@@ -1,22 +1,16 @@
 package com.mogtechnologies.assettracing.graph.utils;
 
-
-import com.mogtechnologies.assettracing.controllers.DatabaseController;
-import com.mogtechnologies.assettracing.models.Asset;
-import com.mogtechnologies.assettracing.models.FullPath;
+import com.mogtechnologies.assettracing.controllers.DataReader;
+import com.mogtechnologies.assettracing.models.Graph;
 import com.thinkaurelius.titan.core.TitanFactory;
 import com.thinkaurelius.titan.core.TitanGraph;
 import com.thinkaurelius.titan.core.TitanTransaction;
-import com.thinkaurelius.titan.core.TitanVertex;
 import com.thinkaurelius.titan.core.util.TitanCleanup;
 import com.mogtechnologies.assettracing.graph.TitanGraphFactory;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
-import org.apache.tinkerpop.gremlin.structure.T;
-import org.mongodb.morphia.Datastore;
-import org.mongodb.morphia.query.Query;
-import java.util.List;
+import java.io.IOException;
 
 public class CreateAndFillGraph {
 
@@ -32,30 +26,9 @@ public class CreateAndFillGraph {
 
             TitanTransaction tx = g.newTransaction();
 
-            Datastore datastore = DatabaseController.getInstance().getDatastore();
-            Query<Asset> query = datastore.createQuery(Asset.class);
-            List<Asset> assets = query.asList();
-
-            for(Asset a : assets){
-                System.out.println("Asset _id: " + a.getId());
-                for(String name : a.getNames()) {
-                    System.out.println("Asset name: " + name);
-                }
-                int doc_no = 0;
-                for(FullPath doc : a.getFullPaths()){
-                    System.out.println("Full Path [" + doc_no + "]: ");
-                    System.out.println("Full Path: " + doc.getFullPath());
-                    System.out.println("Code Machine: " + doc.getCodeMachine());
-                    System.out.println("Exist: " + doc.getExist());
-                    doc_no++;
-                }
-            }
-            System.out.println("Loaded " + assets.size() + " assets!");
-
-            // TESTING REPRESENTING ALL ASSETS //
-            for(Asset a : assets) {
-                tx.addVertex(T.label, "asset", "name", a.getCurrentName(), "id", a.getId(), "full_path", a.getCurrentFullPath().getFullPath());
-            }
+            Graph graphToInsert = DataReader.getGraphFromFile("miserables.json");
+            if( graphToInsert == null )
+                throw new Exception("Error while parsing JSON file!");
 
             // INITIAL EXAMPLE //
             /*
@@ -81,6 +54,12 @@ public class CreateAndFillGraph {
         } catch (ConfigurationException e) {
             e.printStackTrace();
             System.out.println("Failed initializing graph!");
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("There is no such file!");
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
     }
 
