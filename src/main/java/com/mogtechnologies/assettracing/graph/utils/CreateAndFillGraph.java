@@ -2,6 +2,7 @@ package com.mogtechnologies.assettracing.graph.utils;
 
 import com.mogtechnologies.assettracing.controllers.DataReader;
 import com.mogtechnologies.assettracing.models.Graph;
+import com.mogtechnologies.assettracing.models.Node;
 import com.thinkaurelius.titan.core.TitanFactory;
 import com.thinkaurelius.titan.core.TitanGraph;
 import com.thinkaurelius.titan.core.TitanTransaction;
@@ -26,10 +27,20 @@ public class CreateAndFillGraph {
 
             TitanTransaction tx = g.newTransaction();
 
-            Graph graphToInsert = DataReader.getGraphFromFile("miserables.json");
+            Graph graphToInsert = DataReader.getGraphFromFile(
+                    CreateAndFillGraph
+                            .class
+                            .getClassLoader()
+                            .getResource("miserables.json")
+                            .getPath()
+            );
             if( graphToInsert == null )
                 throw new Exception("Error while parsing JSON file!");
+/*
+            for(Node n : graphToInsert.getNodes()){
 
+            }
+*/
             // INITIAL EXAMPLE //
             /*
             TitanVertex asset1 = tx.addVertex(T.label, "asset", "name", "asset1", "id", 1, "date", "2016-04-03");

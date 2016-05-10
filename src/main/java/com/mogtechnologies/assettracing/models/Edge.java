@@ -1,6 +1,7 @@
 package com.mogtechnologies.assettracing.models;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Class representing a simple graph Edge which can contain a source node, a target node and a dictionary of properties.
@@ -8,16 +9,16 @@ import java.util.HashMap;
 public class Edge {
 
     private final String id;
-    private Node source;
-    private Node target;
-    private HashMap<Object, Object> properties;
+    private String source;
+    private String target;
+    private Map<Object, Object> properties;
 
     /**
      * Creates a new Edge given a source and a destination.
-     * @param source The Node from which the Edge points.
-     * @param target The Node to which the Edge points.
+     * @param source The id of the Node from which the Edge points.
+     * @param target The id of the Node to which the Edge points.
      */
-    public Edge(String id, Node source, Node target){
+    public Edge(String id, String source, String target){
         this.id = id;
         this.source = source;
         this.target = target;
@@ -34,33 +35,33 @@ public class Edge {
 
     /**
      * Gets the source of the Edge.
-     * @return The Node from which the Edge points.
+     * @return The id of the Node from which the Edge points.
      */
-    public Node getSource() {
+    public String getSource() {
         return source;
     }
 
     /**
      * Sets source node to a new node.
-     * @param source The Node from which the Edge will now point.
+     * @param source The id of the Node from which the Edge will now point.
      */
-    public void setSource(Node source) {
+    public void setSource(String source) {
         this.source = source;
     }
 
     /**
      * Gets the target of the Edge.
-     * @return The Node to which the Edge points.
+     * @return The id of the Node to which the Edge points.
      */
-    public Node getTarget() {
+    public String getTarget() {
         return target;
     }
 
     /**
      * Sets target node to a new node.
-     * @param target The Node to which the Edge will now point.
+     * @param target The id of the Node to which the Edge will now point.
      */
-    public void setTarget(Node target) {
+    public void setTarget(String target) {
         this.target = target;
     }
 
@@ -119,17 +120,17 @@ public class Edge {
 
     /**
      * Gets the dictionary of properties for the Edge.
-     * @return The HashMap representing the Edge's properties.
+     * @return The Map representing the Edge's properties.
      */
-    public HashMap<Object, Object> getProperties() {
+    public Map<Object, Object> getProperties() {
         return properties;
     }
 
     /**
      * Sets the properties of the Edge.
-     * @param properties New HashMap representing the properties for the Edge.
+     * @param properties New Map representing the properties for the Edge.
      */
-    public void setProperties(HashMap<Object, Object> properties) {
+    public void setProperties(Map<Object, Object> properties) {
         this.properties = properties;
     }
 }

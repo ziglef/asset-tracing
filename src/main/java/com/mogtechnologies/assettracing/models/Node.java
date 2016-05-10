@@ -1,6 +1,7 @@
 package com.mogtechnologies.assettracing.models;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Class representing a simple graph node which contains an id and a dictionary of properties.
@@ -8,7 +9,7 @@ import java.util.HashMap;
 public class Node {
 
     private final String id;
-    private HashMap<Object, Object> properties;
+    private Map<Object, Object> properties;
 
     /**
      * Creates a Node given a certain id.
@@ -82,17 +83,17 @@ public class Node {
 
     /**
      * Gets the dictionary of properties for the Node.
-     * @return The HashMap representing the Node's properties.
+     * @return The Map representing the Node's properties.
      */
-    public HashMap<Object, Object> getProperties() {
+    public Map<Object, Object> getProperties() {
         return properties;
     }
 
     /**
      * Sets the properties of the Node.
-     * @param properties New HashMap representing the properties for the Node.
+     * @param properties New Map representing the properties for the Node.
      */
-    public void setProperties(HashMap<Object, Object> properties) {
+    public void setProperties(Map<Object, Object> properties) {
         this.properties = properties;
     }
 }
