@@ -6,12 +6,10 @@ import org.eclipse.jetty.webapp.WebAppContext;
 
 import java.io.File;
 
-import static com.mogtechnologies.assettracing.graph.utils.CreateAndFillGraph.createAndFill;
-
 public class AssetTracing {
-    public static void main(String[] args){
 
-        createAndFill();
+    public static void main(String[] args){
+        CreateAndFillGraph.createAndFill();
 
         System.out.println("Working directory: " + new File("./").getAbsolutePath());
         Server server = new Server(9091);

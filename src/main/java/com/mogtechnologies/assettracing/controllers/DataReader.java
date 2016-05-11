@@ -41,10 +41,10 @@ public class DataReader {
             String arrName = jsonReader.nextName();
             switch (arrName) {
                 case "nodes":
-                    readNodes(jsonReader);
+                    g.addNodes(readNodes(jsonReader));
                     break;
                 case "edges":
-                    readEdges(jsonReader);
+                    g.addEdges(readEdges(jsonReader));
                     break;
                 default:
                     return null;
@@ -56,7 +56,6 @@ public class DataReader {
 
         return g;
     }
-
 
     /**
      /**
@@ -70,7 +69,11 @@ public class DataReader {
 
         jsonReader.beginArray();
         while( jsonReader.hasNext() ){
-            nodes.add(readNode(jsonReader));
+            Node n = readNode(jsonReader);
+            while( nodes.indexOf(n) != -1 ){
+                n.setId( System.currentTimeMillis() + generateSHA256(n.getId()) );
+            }
+            nodes.add(n);
         }
         jsonReader.endArray();
 
@@ -101,8 +104,8 @@ public class DataReader {
         if( id != null )
             n = new Node(id);
         else {
-            String nodeMd5 = generateMD5(properties.toString());
-            n = new Node(nodeMd5);
+            String nodeSHA256 = generateSHA256(System.currentTimeMillis() + properties.toString());
+            n = new Node(nodeSHA256);
         }
 
         n.setProperties(properties);
@@ -119,13 +122,25 @@ public class DataReader {
 
         jsonReader.beginArray();
         while( jsonReader.hasNext() ){
-            edges.add(readEdge(jsonReader));
+            Edge e = readEdge(jsonReader);
+            if( e == null )
+                continue;
+            while( edges.indexOf(e) != -1 ){
+                e.setId( System.currentTimeMillis() + generateSHA256(e.getId()) );
+            }
+            edges.add(e);
         }
         jsonReader.endArray();
 
         return edges;
     }
 
+    /**
+     * Reads the next Edge present in the given JsonReader.
+     * @param jsonReader The reader where the next element is a Edge.
+     * @return The Edge that was next on the reader or Null if the Edge has invalid format.
+     * @throws IOException When there is no next element.
+     */
     private static Edge readEdge(JsonReader jsonReader) throws IOException {
         Edge e;
         String id = null;
@@ -159,8 +174,8 @@ public class DataReader {
             else
                 return null;
         } else {
-            String edgeMd5 = generateMD5(properties.toString());
-            e = new Edge(edgeMd5, source, target);
+            String edgeSHA256 = generateSHA256(System.currentTimeMillis() + properties.toString());
+            e = new Edge(edgeSHA256, source, target);
         }
 
         e.setProperties(properties);
@@ -175,6 +190,26 @@ public class DataReader {
     private static String generateMD5(String s) {
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
+            md.reset();
+
+            md.update(s.getBytes(Charset.forName("UTF8")));
+            final byte[] digest = md.digest();
+            return new String(Hex.encodeHex(digest));
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    /**
+     * Given an input string it creates the SHA-256 hash for the string.
+     * @param s The string to calculate the hash for.
+     * @return The MD5 hash for the given string.
+     */
+    private static String generateSHA256(String s) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
             md.reset();
 
             md.update(s.getBytes(Charset.forName("UTF8")));

@@ -1,8 +1,8 @@
 package com.mogtechnologies.assettracing.web;
 
 
+import com.mogtechnologies.assettracing.CreateAndFillGraph;
 import com.mogtechnologies.assettracing.GroovyGraphOps;
-import com.mogtechnologies.assettracing.graph.utils.JavaGraphOps;
 import org.codehaus.jettison.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -21,9 +21,6 @@ public class TitanWebService {
     @Autowired
     GroovyGraphOps groovyOp;
 
-    @Autowired
-    JavaGraphOps javaOp;
-
     @PostConstruct
     private void init() {
         System.out.println("Initialized Titan Web Example Service");
@@ -33,7 +30,7 @@ public class TitanWebService {
     @Path("/listVertices")
     @Produces(MediaType.TEXT_PLAIN)
     public String listVertices(@Context UriInfo info) throws JSONException {
-        String res = javaOp.listVertices();
+        String res = groovyOp.listVertices();
         return "\"" + res + "\"";
     }
 
@@ -48,8 +45,16 @@ public class TitanWebService {
     @GET
     @Path("/listEdges")
     @Produces(MediaType.TEXT_PLAIN)
-    public String getGraph(@Context UriInfo info) throws JSONException {
-        String res = javaOp.listEdges();
+    public String getEdges(@Context UriInfo info) throws JSONException {
+        String res = groovyOp.listEdges();
         return "\"" + res + "\"";
+    }
+
+    @GET
+    @Path("/getJsonGraph")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String getJsonGraph(@Context UriInfo info) throws JSONException {
+        groovyOp.getJsonGraph();
+        return "\"" + "ok" + "\"";
     }
 }

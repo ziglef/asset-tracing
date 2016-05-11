@@ -1,23 +1,23 @@
-package com.mogtechnologies.assettracing.graph;
+package com.mogtechnologies.assettracing;
 
 import com.thinkaurelius.titan.core.TitanFactory;
-import com.thinkaurelius.titan.core.TitanGraph;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.commons.configuration.PropertiesConfiguration
+import org.apache.tinkerpop.gremlin.structure.Graph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 
 @Component
-public class TitanGraphFactory {
-    private static final Logger logger = LoggerFactory.getLogger(com.mogtechnologies.assettracing.graph.TitanGraphFactory.class);
+class TitanGraphFactory {
+    private static final Logger logger = LoggerFactory.getLogger(TitanGraphFactory.class);
 
     public static final String PROPS_PATH = "titan-berkeleyje-es.properties";
 
     // One graph to rule them all...
-    private TitanGraph g;
+    private Graph g;
 
     @PostConstruct
     public void init() {
@@ -31,7 +31,7 @@ public class TitanGraphFactory {
         }
     }
 
-    public TitanGraph getGraph() {
+    public Graph getGraph() {
         return g;
     }
 

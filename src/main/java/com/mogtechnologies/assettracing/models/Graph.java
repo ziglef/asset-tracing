@@ -1,6 +1,9 @@
 package com.mogtechnologies.assettracing.models;
 
+import com.google.gson.Gson;
+
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Class representing a simple Graph which can contain a list of Nodes and a list of Edges.
@@ -37,6 +40,14 @@ public class Graph {
                 return n;
 
         return null;
+    }
+
+    /**
+     * Adds a list of Nodes to the Graph.
+     * @param n The Nodes to add.
+     */
+    public void addNodes(List<Node> n) {
+        this.nodes.addAll(n);
     }
 
     /**
@@ -77,6 +88,14 @@ public class Graph {
     }
 
     /**
+     * Adds a list of Nodes to the Graph.
+     * @param e The Nodes to add.
+     */
+    public void addEdges(List<Edge> e) {
+        this.edges.addAll(e);
+    }
+
+    /**
      * Adds an Edge to the Graph.
      * @param e The Edge to add.
      */
@@ -90,5 +109,26 @@ public class Graph {
      */
     public void setEdges(ArrayList<Edge> edges) {
         this.edges = edges;
+    }
+
+    /**
+     * Returns the Graph as a string with a given type. Current supported types are: JSON
+     * @param type Type of representation for the graph.
+     * @return A string in the given type representing the Graph.
+     */
+    public String toString(String type) throws Exception {
+        if( !type.equals("JSON" ) )
+            throw new Exception("No such output type!");
+
+        return this.toJsonString();
+    }
+
+    /**
+     * Represents the Graph in JSON. It follows the same format as Sigma.JS
+     * @return Returns the Graph represented in JSON.
+     */
+    private String toJsonString() {
+        Gson gson = new Gson();
+        return gson.toJson(this);
     }
 }

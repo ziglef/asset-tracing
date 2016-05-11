@@ -3,13 +3,13 @@
     <head lang="en">
         <meta charset="UTF-8">
         <title>Graph Visualization Demo</title>
-        <script src="components/vis/dist/vis.js"></script>
-        <link href="components/vis/dist/vis.css" rel="stylesheet" type="text/css" />
+        <script src="components/sigma/sigma.min.js"></script>
+        <script src="components/sigma/plugins/sigma.parsers.json.min.js"></script>
+        <script src="components/sigma/plugins/sigma.layout.forceAtlas2.min.js"></script>
     </head>
     <body>
         <h1>Titan Web Graph Visualization</h1>
-        <div id="visualization-graph" style="height: 700px; width: 100%"></div>
-        <div id="visualization-timeline" style="height: 300px; width: 100%"></div>
+        <div id="graph-container" style="height: 700px; width: 100%"></div>
         <script type="text/javascript">
 
             function httpGet(theUrl) {
@@ -19,60 +19,114 @@
                 return xmlHttp.responseText;
             }
 
-            var node_names = httpGet("http://localhost:9091/rest/listVertices").replace(/\"/g, "").split(' ');
-            var edge_names = httpGet("http://localhost:9091/rest/listEdges").replace(/\"/g, "").split(' ');
+            // Prepares the JSON file
+            httpGet("http://localhost:9091/rest/getJsonGraph");
 
-            // console.log("node_names: " + node_names);
-            // console.log("edge_names: " + edge_names);
+            var original_color = 'orange';
 
-            var nodes = new vis.DataSet();
-            var edges = new vis.DataSet();
-            var index;
-
-            for(index=0; index<node_names.length; ++index){
-                nodes.add({
-                    id: node_names[index],
-                    label: node_names[index]
-                });
-            }
-
-            for(index=0; index<edge_names.length; index+=2){
-                edges.add({
-                    from: edge_names[index],
-                    to: edge_names[index+1],
-                    arrows: 'to'
-                });
-            }
-
-            // create a network
-            var container_graph = document.getElementById('visualization-graph');
-            var data = {
-                nodes: nodes,
-                edges: edges
+            // Creates an empty graph
+            var g = {
+                nodes: [],
+                edges: []
             };
-            var options_graph = {};
-            var network = new vis.Network(container_graph, data, options_graph);
 
-            // Timeline
-            // DOM element where the Timeline will be attached
-            var container_timeline = document.getElementById('visualization-timeline');
+            // Add a neighbours function to our graph
+            sigma.classes.graph.addMethod('neighbors', function(nodeId) {
+                var k;
+                var neighbors = {};
+                var index = this.allNeighborsIndex[nodeId] || {};
 
+                for (k in index)
+                    neighbors[k] = this.nodesIndex[k];
 
-            var timeline_nodes = new vis.DataSet();
+                return neighbors;
+            });
 
-            for(index=0; index<node_names.length; ++index){
-                timeline_nodes.add({
-                    id: node_names[index],
-                    content: node_names[index],
-                    start: '2016-04-01'
-                });
-            }
+            // Create a new Sigma instance in the graph-container div
+            s = new sigma({
+                graph: g,
+                container: 'graph-container',
+                renderer: {
+                    container: document.getElementById('graph-container'),
+                    type: 'canvas'
+                },
+                settings: {
+                    minNodeSize: 4,
+                    maxNodeSize: 8
+                }
+            });
 
-            // Configuration for the Timeline
-            var options_timeline = {};
+            // Load the JSON to our instance
+            sigma.parsers.json(
+                    'titan-graph.json',             // Data file
+                    s,                              // Sigma instance
+                    function(s) {                   // Add x and y attributes (It runs after all data is loaded)
+                        var i;
+                        var nodes = s.graph.nodes();
+                        var len = nodes.length;
 
-            // Create a Timeline
-            var timeline = new vis.Timeline(container_timeline, timeline_nodes, options_timeline);
+                        for(i=0; i<len; i++){
+                            nodes[i].x = Math.random();
+                            nodes[i].y = Math.random();
+                            nodes[i].size = s.graph.degree(nodes[i].id);
+                            nodes[i].color = original_color;
+                            nodes[i].label = nodes[i].properties.name;
+                        }
+
+                        // Refresh the display
+                        s.refresh();
+
+                        // ForceAtlas Layout
+                        s.startForceAtlas2();
+
+                        // When a node is clicked, we check for each node
+                        // if it is a neighbor of the clicked one. If not,
+                        // we set its color as grey, and else, it takes its
+                        // original color.
+                        // We do the same for the edges, and we only keep
+                        // edges that have both extremities colored.
+                        s.bind('clickNode', function(e) {
+                            var nodeId = e.data.node.id,
+                                    toKeep = s.graph.neighbors(nodeId);
+                            toKeep[nodeId] = e.data.node;
+
+                            s.graph.nodes().forEach(function(n) {
+                                if (toKeep[n.id])
+                                    n.color = original_color;
+                                else
+                                    n.color = '#eee';
+                            });
+
+                            s.graph.edges().forEach(function(e) {
+                                if (toKeep[e.source] && toKeep[e.target])
+                                    e.color = original_color;
+                                else
+                                    e.color = '#eee';
+                            });
+
+                            // Since the data has been modified, we need to
+                            // call the refresh method to make the colors
+                            // update effective.
+                            s.refresh();
+                        });
+
+                        // When the stage is clicked, we just color each
+                        // node and edge with its original color.
+                        s.bind('clickStage', function(e) {
+                            s.graph.nodes().forEach(function(n) {
+                                n.color = original_color;
+                            });
+
+                            s.graph.edges().forEach(function(e) {
+                                e.color = original_color;
+                            });
+
+                            // Same as in the previous event:
+                            s.refresh();
+                        });
+                    }
+            );
+
         </script>
     </body>
 </html>

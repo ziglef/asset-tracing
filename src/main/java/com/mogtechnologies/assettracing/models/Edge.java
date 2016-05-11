@@ -8,7 +8,7 @@ import java.util.Map;
  */
 public class Edge {
 
-    private final String id;
+    private String id;
     private String source;
     private String target;
     private Map<Object, Object> properties;
@@ -31,6 +31,14 @@ public class Edge {
      */
     public String getId() {
         return id;
+    }
+
+    /**
+     * Sets the ID of the Edge to a new value.
+     * @param id The new ID for the Edge.
+     */
+    public void setId(String id) {
+        this.id = id;
     }
 
     /**
@@ -70,7 +78,7 @@ public class Edge {
      * @param key Key of the property to get.
      * @return Value of the given key or null if it doesn't exist.
      */
-    public Object getProperty(String key){
+    public Object getProperty(Object key){
         return this.properties.get(key);
     }
 
@@ -80,7 +88,7 @@ public class Edge {
      * @param value Value of the property to add.
      * @return Value added if successful or null if Key is already in the properties of the Edge.
      */
-    public Object addProperty(String key, String value){
+    public Object addProperty(Object key, Object value){
         if( this.properties.get(key) != null )
             return null;
         else {
@@ -95,7 +103,7 @@ public class Edge {
      * @param value Value of the property to update.
      * @return Value updated if successful or null if Key was not present in the properties of the Edge.
      */
-    public Object updateProperty(String key, String value) {
+    public Object updateProperty(Object key, Object value) {
         if (this.properties.get(key) != null){
             this.properties.put(key, value);
             return value;
@@ -109,7 +117,7 @@ public class Edge {
      * @param key Key of the property to be removed.
      * @return Returns the value of the property if successful or null if the given key doesn't exist.
      */
-    public Object removeProperty(String key){
+    public Object removeProperty(Object key){
         if (this.properties.get(key) != null){
             Object value = this.properties.get(key);
             this.properties.remove(key);
@@ -132,5 +140,17 @@ public class Edge {
      */
     public void setProperties(Map<Object, Object> properties) {
         this.properties = properties;
+    }
+
+    /**
+     * Compares Edges by their ID as they should be unique.
+     * @param obj The Edge to compare this Edge to.
+     * @return True if equal, False if not.
+     */
+    @Override
+    public boolean equals(Object obj) {
+        return
+                this.getClass().getCanonicalName().equals(obj.getClass().getCanonicalName()) &&
+                        this.id.equals(((Edge) obj).getId());
     }
 }
